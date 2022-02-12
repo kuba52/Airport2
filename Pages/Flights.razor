@@ -141,6 +141,8 @@
     private CityInfo cityInfo = new CityInfo();
     private UserInfo userInfo = new UserInfo();
 
+    private CustomValidation? validation;
+
     protected override void OnInitialized()
     {
         base.OnInitialized();
@@ -160,7 +162,20 @@
     }
 
 
-    private void HandleValidSubmit() => FlightsService.CreateDeparture(createDepartureModel);
+    private void HandleValidSubmit() {
+        var errors = new Dictionary<string, List<string>>();
+            
+        if (createDepartureModel.startTime > createDepartureModel.arrivalTime) errors.Add("Arrival<start", new () {"Arrival cannot be earlier than Start"});
+
+        if (errors.Any())
+        {
+            validation?.DisplayErrors(errors);
+        }
+        else
+        {
+            FlightsService.CreateDeparture(createDepartureModel);
+        }
+    }
     
 
 }

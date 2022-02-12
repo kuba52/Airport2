@@ -13,7 +13,7 @@
 
 <EditForm Model="@createAccountModel" OnValidSubmit="@HandleValidSubmit">
     <DataAnnotationsValidator />
-   
+    <CustomValidation @ref="validation" />
     <ValidationSummary />
 
     <p>
@@ -34,7 +34,7 @@
 @code {
     private CreateAccount createAccountModel = new();
 
-    //private CustomValidation? validation;
+    private CustomValidation? validation;
 
     private async Task HandleValidSubmit() {
         var errors = new Dictionary<string, List<string>>();
@@ -45,8 +45,7 @@
 
         if (errors.Any())
         {
-            //validation?.DisplayErrors(errors);
-            // <CustomValidation @ref="validation" />
+            validation?.DisplayErrors(errors);
         }
         else
         {

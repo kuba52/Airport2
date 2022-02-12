@@ -38,17 +38,18 @@ CREATE TABLE flights(
     start INTEGER REFERENCES city NOT NULL,
     arrival_time TIMESTAMP(0) NOT NULL,
     destination INTEGER REFERENCES city NOT NULL,
-    plane_id INTEGER REFERENCES plane NOT NULL
+    plane_id INTEGER REFERENCES plane NOT NULL,
+    CHECK ( start_time < arrival_time )
 );
 
 INSERT INTO flights(start_time, arrival_time, start, destination, plane_id) VALUES
     ('2022-03-09', '2022-03-10',  1, 4, 4),
-    ('2022-04-09', '2022-03-10',  2, 5, 2),
-    ('2022-04-09', '2022-03-10',  2, 1, 3),
-    ('2022-04-09', '2022-03-10',  3, 7, 1),
-    ('2022-04-09', '2022-03-10',  1, 5, 3),
-    ('2022-04-09', '2022-03-10',  2, 1, 1),
-    ('2022-04-09', '2022-03-10',  4, 7, 5)
+    ('2022-03-09', '2022-04-10',  2, 5, 2),
+    ('2022-03-09', '2022-04-10',  2, 1, 3),
+    ('2022-03-09', '2022-04-10',  3, 7, 1),
+    ('2022-03-09', '2022-04-10',  1, 5, 3),
+    ('2022-03-09', '2022-04-10',  2, 1, 1),
+    ('2022-03-09', '2022-04-10',  4, 7, 5)
 ;
 
 CREATE TABLE account(
