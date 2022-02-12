@@ -1,0 +1,64 @@
+@page "/cities"
+
+<PageTitle>Cities:</PageTitle>
+
+@using Conference.Data
+@inject CitiesService CitiesService
+@inject Blazored.SessionStorage.ISessionStorageService SessionStorage
+
+<h1>Cities</h1>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>CityId</th>
+        <th>City</th>
+
+    </tr>
+    </thead>
+    <tbody>
+
+    @foreach (var city in CitiesService.GetCities())
+    {
+        <tr>
+        <td>@city.Id</td>
+        <td>@city.Destination</td>
+
+        </tr>
+    }
+    </tbody>
+</table>
+
+@if (userInfo.isStaff) {
+<h2>Add a new City:</h2>
+
+<EditForm Model="@createCity" OnValidSubmit="@HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <p>
+        Model:
+       <InputText id = "City" @bind-Value="createCity.Destination"></InputText>
+   </p>
+    
+    <button type="submit">Submit</button>
+</EditForm>
+}
+@code
+{
+    CreateCity createCity = new CreateCity();
+
+    private void HandleValidSubmit() {
+        CitiesService.CreateCity(createCity);
+    }
+
+    UserInfo userInfo = new UserInfo();
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        userInfo = await SessionStorage.GetItemAsync<UserInfo>("userInfo");
+        StateHasChanged();
+    }
+}
+
+

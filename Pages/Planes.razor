@@ -1,0 +1,77 @@
+@page "/planes"
+
+<PageTitle>Planes</PageTitle>
+
+@using Conference.Data
+@inject PlanesService PlanesService
+@inject Blazored.SessionStorage.ISessionStorageService SessionStorage
+
+<h1>Planes</h1>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>PlaneId</th>
+        <th>Model</th>
+        <th>Company</th>
+        <th>Capacity</th>
+    </tr>
+    </thead>
+    <tbody>
+
+    @foreach (var plane in PlanesService.GetPlanes())
+    {
+        <tr>
+        <td>@plane.Id</td>
+        <td>@plane.Model</td>
+        <td>@plane.Company</td>
+        <td>@plane.Capacity</td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+@if (userInfo.isStaff) {
+<h2>Add a new Plane:</h2>
+
+<EditForm Model="@createPlane" OnValidSubmit="@HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <p>
+        Model:
+       <InputText id = "model" @bind-Value="createPlane.Model"></InputText>
+   </p>
+
+   <p>
+       Company:
+       <InputText id = "company" @bind-Value="createPlane.Company"></InputText>
+   </p>
+
+    <p>
+        Capacity:
+        <InputNumber id="cap" @bind-Value="createPlane.Capacity"></InputNumber>
+    </p>
+    
+    <button type="submit">Submit</button>
+</EditForm>
+}
+
+@code
+{
+    CreatePlane createPlane = new CreatePlane();
+
+    UserInfo userInfo = new UserInfo();
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        userInfo = await SessionStorage.GetItemAsync<UserInfo>("userInfo");
+        StateHasChanged();
+    }
+
+    private void HandleValidSubmit() {
+        PlanesService.CreatePlane(createPlane);
+    }
+
+
+}

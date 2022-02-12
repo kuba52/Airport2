@@ -1,0 +1,44 @@
+@page "/register"
+
+<PageTitle>Register</PageTitle>
+
+@using Conference.Data
+@inject AccountService AccountService
+
+<h1>Register</h1>
+
+<p>Please enter your name and surmane.</p>
+
+
+<EditForm Model="@createAccountModel" OnValidSubmit="@HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <p>
+        <label>
+            Name:
+            <InputText id="name" @bind-Value="createAccountModel.Name" />
+        </label>
+    </p>
+    <p>
+        <label>
+            Surname:
+            <InputText id="surname" @bind-Value="createAccountModel.Surname" />
+        </label>
+    </p>
+    <p>
+        <label>
+            Staff:
+            <InputCheckbox id="isstaff" @bind-Value="createAccountModel.isStaff" />
+        </label>
+    </p>
+    
+    <button type="submit">Submit</button>
+</EditForm>
+
+@code {
+    private CreateAccount createAccountModel = new();
+
+    private void HandleValidSubmit() => 
+        AccountService.CreateAccount(createAccountModel);
+}
