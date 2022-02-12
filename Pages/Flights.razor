@@ -1,0 +1,166 @@
+﻿@page "/flights"
+
+<PageTitle>Departures</PageTitle>
+
+@using Conference.Data
+@using Radzen
+@using Radzen.Blazor
+@inject FlightsService FlightsService
+@inject PlanesService PlanesService
+@inject CitiesService CitiesService
+@inject Blazored.SessionStorage.ISessionStorageService SessionStorage
+<h1>Arrivals:</h1>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>Id</th>
+        <th>Start Time</th>
+        <th>Destination</th>
+        <th>Arrival Time</th>
+        <th>PlaneId</th>
+        <th>Company</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var arrival in FlightsService.GetArrivals(cityInfo.cityId).OrderBy(a => a.StartTime))
+    {
+        <tr>
+            <td>@arrival.Id</td>
+            <td>@arrival.StartTime</td>
+            <td>@arrival.Destination</td>
+            <td>@arrival.ArrivalTime</td>
+            <td>@arrival.Plane?.Id</td>
+            <td>@arrival.Plane?.Company</td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+<h1>Departures:</h1>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>Id</th>
+        <th>Start Time</th>
+        <th>Destination</th>
+        <th>Arrival Time</th>
+        <th>PlaneId</th>
+        <th>Company</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var arrival in FlightsService.GetDepartures(cityInfo.cityId).OrderBy(a => a.StartTime))
+    {
+        <tr>
+            <td>@arrival.Id</td>
+            <td>@arrival.StartTime</td>
+            <td>@arrival.Destination</td>
+            <td>@arrival.ArrivalTime</td>
+            <td>@arrival.Plane?.Id</td>
+            <td>@arrival.Plane?.Company</td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+<h2>Add a new Flight:</h2>
+
+<EditForm Model="@createDepartureModel" OnValidSubmit="@HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+     <p>
+        <label>
+            Start Time:
+            <RadzenDatePicker @bind-Value="@createDepartureModel.startTime" ShowTime="true" />
+        </label>
+    </p>
+     <p>
+        <label>
+            Arrival Time:
+            <RadzenDatePicker @bind-Value="@createDepartureModel.arrivalTime" ShowTime="true" />
+        </label>
+    </p>
+
+    <p>
+        <label>
+            Plane:
+            <InputSelect id="plane" @bind-Value="@createDepartureModel.planeId">
+            if (planes is not null) {
+                @foreach (var plane in planes)
+                {
+                    <option value="@plane.Id">@plane.Company</option>
+                }
+            }
+            </InputSelect>
+        </label>
+    </p>
+
+     <p>
+        <label>
+            Start:
+            <InputSelect id="from" @bind-Value="@createDepartureModel.start">
+            if (cities is not null) {
+                @foreach (var city in cities)
+                {
+                    <option value="@city.Id">@city.Destination</option>
+                }
+            }
+            </InputSelect>
+        </label>
+    </p>
+
+    <p>
+        <label>
+            Destination:
+            <InputSelect id="destination" @bind-Value="@createDepartureModel.destination">
+            if (cities is not null) {
+                @foreach (var city in cities)
+                {
+                    <option value="@city.Id">@city.Destination</option>
+                }
+            }
+            </InputSelect>
+        </label>
+    </p>
+    <button type="submit">Submit</button>
+</EditForm>
+
+
+@code
+{
+    private CreateFlight createDepartureModel = new CreateFlight();
+
+    private IReadOnlyList<Plane>? planes;
+
+    private IReadOnlyList<City>? cities;
+
+    private CityInfo cityInfo = new CityInfo();
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        planes = PlanesService.GetPlanes();
+        cities = CitiesService.GetCities();
+
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender){
+        cityInfo = await SessionStorage.GetItemAsync<CityInfo>("cityInfo");
+
+        StateHasChanged();
+        }
+     
+    }
+
+
+    private void HandleValidSubmit() => FlightsService.CreateDeparture(createDepartureModel);
+    
+
+}
+
+

@@ -1,0 +1,58 @@
+@page "/login"
+
+<PageTitle>Register</PageTitle>
+
+@using Conference.Data
+@inject AccountService AccountService
+@inject Blazored.SessionStorage.ISessionStorageService SessionStorage
+
+<h1>Login</h1>
+
+<p>Please enter your name and surmane.</p>
+
+
+<EditForm Model="@createAccountModel" OnValidSubmit="@HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <CustomValidation @ref="validation" />
+    <ValidationSummary />
+
+    <p>
+        <label>
+            Name:
+            <InputText id="name" @bind-Value="createAccountModel.Name" />
+        </label>
+    </p>
+    <p>
+        <label>
+            Surname:
+            <InputText id="surname" @bind-Value="createAccountModel.Surname" />
+        </label>
+    </p>    
+    <button type="submit">Submit</button>
+</EditForm>
+
+@code {
+    private CreateAccount createAccountModel = new();
+
+    private CustomValidation? validation;
+
+    private async Task HandleValidSubmit() {
+        var errors = new Dictionary<string, List<string>>();
+        int id = AccountService.TryLogin(createAccountModel);
+
+        if (id == 0) errors.Add("Loggin", new (){"Wrong loggin or password"});
+
+
+        if (errors.Any())
+        {
+            validation?.DisplayErrors(errors);
+        }
+        else
+        {
+            UserInfo userInfo = AccountService.GetAccount(id);
+            await SessionStorage.SetItemAsync("userInfo", userInfo);
+        }
+
+        return;
+    }
+}
