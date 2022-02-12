@@ -20,8 +20,8 @@ CREATE TABLE city (
     UNIQUE (destination)
 );
 
-INSERT INTO city(destination) 
-VALUES 
+INSERT INTO city(destination)
+VALUES
     ('London'),
     ('Warsaw'),
     ('Cracow'),
@@ -48,7 +48,7 @@ INSERT INTO flights(start_time, arrival_time, start, destination, plane_id) VALU
     ('2022-04-09', '2022-03-10',  3, 7, 1),
     ('2022-04-09', '2022-03-10',  1, 5, 3),
     ('2022-04-09', '2022-03-10',  2, 1, 1),
-    ('2022-04-09', '2022-03-10',  4, 7, 5),
+    ('2022-04-09', '2022-03-10',  4, 7, 5)
 ;
 
 CREATE TABLE account(
@@ -62,7 +62,7 @@ INSERT INTO account(name, surname, is_staff) VALUES('Krzysztof', 'Piątek', TRUE
 
 CREATE TABLE passengers(
     flight_id INTEGER REFERENCES flights NOT NULL,
-    account_id INTEGER REFERENCES account NOT NULL
+    account_id INTEGER REFERENCES account NOT NULL,
     UNIQUE (flight_id, account_id)
 );
 
@@ -87,6 +87,7 @@ BEGIN
     IF (min < 0) THEN
       RAISE EXCEPTION 'There is no space for more passengers.';
     END IF;
+    RETURN NULL;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -95,13 +96,3 @@ DROP TRIGGER IF EXISTS max_people_on_board_trg ON passengers;
 CREATE TRIGGER max_people_on_board_trg
   BEFORE INSERT OR UPDATE ON passengers
 EXECUTE PROCEDURE max_people_on_board_trgfn();
-
-
-BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
- COMMIT;
-
-
-SELECT f.id AS arrivalId, f.start_time AS startTime, f.arrival_time AS arrivalTime, c.destination AS dest, c2.destination AS From, p.id as planeId, p.model AS model, p.company AS comp, p.capacity
-                    FROM flights f LEFT JOIN plane p on p.id = f.plane_id Join city c on c.id = f.destination Join city c2 on c2.id = f.start
-                    WHERE f.start = 1 AND f.destination = 7 AND f.start_time > now()
-
