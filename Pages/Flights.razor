@@ -9,6 +9,8 @@
 @inject PlanesService PlanesService
 @inject CitiesService CitiesService
 @inject Blazored.SessionStorage.ISessionStorageService SessionStorage
+@inject IJSRuntime JS
+
 <h1>Arrivals:</h1>
 
 <table class="table">
@@ -70,6 +72,7 @@
 
 <EditForm Model="@createDepartureModel" OnValidSubmit="@HandleValidSubmit">
     <DataAnnotationsValidator />
+    <CustomValidation @ref="validation" />
     <ValidationSummary />
 
      <p>
@@ -162,7 +165,7 @@
     }
 
 
-    private void HandleValidSubmit() {
+    private async Task HandleValidSubmit() {
         var errors = new Dictionary<string, List<string>>();
             
         if (createDepartureModel.startTime > createDepartureModel.arrivalTime) errors.Add("Arrival<start", new () {"Arrival cannot be earlier than Start"});
@@ -173,7 +176,17 @@
         }
         else
         {
-            FlightsService.CreateDeparture(createDepartureModel);
+
+            try 
+            {
+                FlightsService.CreateDeparture(createDepartureModel);
+            }
+            catch (Exception e)
+            {
+                await JS.InvokeAsync<object>("displayAlert", e.Message);
+            }
+    
+            
         }
     }
     
