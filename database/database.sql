@@ -56,7 +56,8 @@ CREATE TABLE account(
     id INTEGER GENERATED ALWAYS AS identity PRIMARY KEY,
     name varchar(255) NOT NULL,
     surname varchar(255) not null,
-    is_staff boolean not null
+    is_staff boolean not null,
+    UNIQUE (name, surname, is_stuff)
 );
 
 INSERT INTO account(name, surname, is_staff) VALUES('Krzysztof', 'Piątek', TRUE);
@@ -95,5 +96,5 @@ $$ LANGUAGE plpgsql;
 DROP TRIGGER IF EXISTS max_people_on_board_trg ON passengers;
 
 CREATE TRIGGER max_people_on_board_trg
-  BEFORE INSERT OR UPDATE ON passengers
+  AFTER INSERT OR UPDATE ON passengers
 EXECUTE PROCEDURE max_people_on_board_trgfn();
