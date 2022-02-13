@@ -4,6 +4,7 @@
 
 @using Conference.Data
 @inject AccountService AccountService
+@inject IJSRuntime JS
 
 <h1>Register</h1>
 
@@ -39,6 +40,17 @@
 @code {
     private CreateAccount createAccountModel = new();
 
-    private void HandleValidSubmit() => 
-        AccountService.CreateAccount(createAccountModel);
+   
+    private async Task HandleValidSubmit() 
+    {
+
+        try 
+        {
+          AccountService.CreateAccount(createAccountModel);
+        }
+        catch (Exception e)
+        {
+            await JS.InvokeAsync<object>("displayAlert", e.Message);
+        }
+    }
 }

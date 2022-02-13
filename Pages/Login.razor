@@ -40,7 +40,7 @@
         var errors = new Dictionary<string, List<string>>();
         int id = AccountService.TryLogin(createAccountModel);
 
-        if (id == 0) errors.Add("Loggin", new (){"Wrong loggin or password"});
+        if (id == 0) errors.Add("Login", new (){"Wrong login or password"});
 
 
         if (errors.Any())

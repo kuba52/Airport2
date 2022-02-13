@@ -5,6 +5,7 @@
 @using Conference.Data
 @inject PlanesService PlanesService
 @inject Blazored.SessionStorage.ISessionStorageService SessionStorage
+@inject IJSRuntime JS
 
 <h1>Planes</h1>
 
@@ -69,9 +70,17 @@
         StateHasChanged();
     }
 
-    private void HandleValidSubmit() {
-        PlanesService.CreatePlane(createPlane);
-    }
+     private async Task HandleValidSubmit() 
+    {
 
+        try 
+        {
+          PlanesService.CreatePlane(createPlane);
+        }
+        catch (Exception e)
+        {
+            await JS.InvokeAsync<object>("displayAlert", e.Message);
+        }
+    }
 
 }

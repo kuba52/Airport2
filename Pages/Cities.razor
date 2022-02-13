@@ -5,6 +5,7 @@
 @using Conference.Data
 @inject CitiesService CitiesService
 @inject Blazored.SessionStorage.ISessionStorageService SessionStorage
+@inject IJSRuntime JS
 
 <h1>Cities</h1>
 
@@ -48,8 +49,17 @@
 {
     CreateCity createCity = new CreateCity();
 
-    private void HandleValidSubmit() {
-        CitiesService.CreateCity(createCity);
+     private async Task HandleValidSubmit() 
+    {
+
+        try 
+        {
+            CitiesService.CreateCity(createCity);
+        }
+        catch (Exception e)
+        {
+            await JS.InvokeAsync<object>("displayAlert", e.Message);
+        }
     }
 
     UserInfo userInfo = new UserInfo();

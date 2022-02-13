@@ -1,9 +1,10 @@
 ﻿@page "/"
 
-
 @using Conference.Data
 @inject CitiesService CitiesService
 @inject Blazored.SessionStorage.ISessionStorageService SessionStorage
+@using Blazored.Toast
+@using Blazored.Toast.Services
 
 
 <PageTitle>Index</PageTitle>
@@ -30,6 +31,7 @@ Welcome to Airport. Choose your city:
     <button type="submit">Submit</button>
 </EditForm>
 
+
 @code
 {
     private IReadOnlyList<City>? cities;
@@ -41,6 +43,7 @@ Welcome to Airport. Choose your city:
         cities = CitiesService.GetCities();
  
     }
+
 
     private void HandleValidSubmit(){
         SessionStorage.SetItemAsync("cityInfo", cityInfo);
