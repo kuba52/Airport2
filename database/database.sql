@@ -57,7 +57,7 @@ CREATE TABLE account(
     name varchar(255) NOT NULL,
     surname varchar(255) not null,
     is_staff boolean not null,
-    UNIQUE (name, surname, is_stuff)
+    UNIQUE (name, surname, is_staff)
 );
 
 INSERT INTO account(name, surname, is_staff) VALUES('Krzysztof', 'Piątek', TRUE);
